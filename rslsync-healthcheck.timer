@@ -1,0 +1,12 @@
+[Unit]
+Description=Resilio Sync Health Check Timer
+Requires=rslsync-healthcheck.service
+
+[Timer]
+# Run at configured interval
+OnBootSec=%HEALTH_CHECK_BOOT_DELAY%
+OnUnitActiveSec=%HEALTH_CHECK_INTERVAL%
+Persistent=true
+
+[Install]
+WantedBy=timers.target

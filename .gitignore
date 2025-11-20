@@ -1,0 +1,18 @@
+# Resilio Sync binary (download separately)
+rslsync
+
+# Configuration (may contain personal settings)
+config.sh
+
+# Log files (stored in repo directory)
+rslsync-failures.log
+rslsync-health.log
+
+# Warning flags (stored in repo directory)
+.rslsync-failed
+.RSLSYNC-DOWN-WARNING.txt
+
+# Resilio Sync data directories (if you store them here)
+.sync/
+sync/
+

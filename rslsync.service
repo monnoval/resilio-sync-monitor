@@ -1,0 +1,24 @@
+[Unit]
+Description=Resilio Sync
+Wants=network-online.target
+After=network-online.target
+OnFailure=rslsync-failure-notify@%n.service
+
+[Service]
+Type=simple
+ExecStart=%RESILIO_BASE_DIR%/rslsync --nodaemon
+Restart=on-failure
+RestartSec=10
+StartLimitInterval=200
+StartLimitBurst=5
+
+# Health check
+ExecStartPost=/bin/sleep 5
+ExecStartPost=/bin/bash -c 'if ! pgrep -f "rslsync" > /dev/null; then exit 1; fi'
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

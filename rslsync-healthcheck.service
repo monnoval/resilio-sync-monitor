@@ -1,0 +1,6 @@
+[Unit]
+Description=Resilio Sync Health Check
+
+[Service]
+Type=oneshot
+ExecStart=%RESILIO_BASE_DIR%/check-rslsync-health.sh
