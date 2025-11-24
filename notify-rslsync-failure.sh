@@ -14,6 +14,16 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Log file for tracking failures
 LOG_FILE="$SCRIPT_DIR/rslsync-failures.log"
 
+# Wait a moment to see if it's just a restart
+sleep 3
+
+# Check if the service is actually down or just restarting
+if systemctl --user is-active "$SERVICE_NAME" &> /dev/null; then
+    # Service recovered, don't send notification
+    echo "[$TIMESTAMP] Service had brief failure but recovered" >> "$LOG_FILE"
+    exit 0
+fi
+
 # Get failure reason from systemd
 FAILURE_REASON=$(systemctl --user status "$SERVICE_NAME" 2>&1 | tail -20)
 
@@ -25,22 +35,17 @@ echo "----------------------------------------" >> "$LOG_FILE"
 # Desktop notification
 NOTIFICATION_SENT=false
 
-# KDE Plasma - use kdialog (native KDE notification)
+# KDE Plasma - use kdialog passivepopup (native KDE notification)
 if [ -n "$DISPLAY" ] && command -v kdialog &> /dev/null; then
-    kdialog --title "Resilio Sync Failed" \
-            --error "⚠️ Resilio Sync failed to start at $TIMESTAMP
-
-File synchronization is NOT working!
-
-Check logs with:
-journalctl --user -u rslsync.service" 2>/dev/null && NOTIFICATION_SENT=true
+    kdialog --title "Resilio Sync Down" \
+            --passivepopup "⚠️ Resilio Sync is not running!\n\nFile synchronization is NOT working!\n\nCheck: journalctl --user -u rslsync.service" 20 2>/dev/null && NOTIFICATION_SENT=true
 fi
 
 # Fallback to notify-send (works on most desktops)
 if [ "$NOTIFICATION_SENT" = false ] && [ -n "$DISPLAY" ] && command -v notify-send &> /dev/null; then
-    notify-send -u critical \
-        "⚠️ Resilio Sync Failed" \
-        "Resilio Sync failed to start at $TIMESTAMP\nCheck logs: journalctl --user -u rslsync.service" && NOTIFICATION_SENT=true
+    notify-send -u critical -a "Resilio Sync Monitor" \
+        "Resilio Sync Down" \
+        "Resilio Sync is not running!\nCheck logs: journalctl --user -u rslsync.service" && NOTIFICATION_SENT=true
 fi
 
 # Try to find the DBUS session for notification (even if not in active session)
@@ -54,8 +59,8 @@ if [ "$NOTIFICATION_SENT" = false ]; then
         for session in /run/user/$USER_UID/bus; do
             if [ -S "$session" ]; then
                 DBUS_SESSION_BUS_ADDRESS="unix:path=$session" \
-                kdialog --title "Resilio Sync Failed" \
-                        --error "⚠️ Resilio Sync failed to start at $TIMESTAMP" 2>/dev/null && NOTIFICATION_SENT=true && break
+                kdialog --title "Resilio Sync Down" \
+                        --passivepopup "⚠️ Resilio Sync is not running!" 20 2>/dev/null && NOTIFICATION_SENT=true && break
             fi
         done
     fi
@@ -65,9 +70,9 @@ if [ "$NOTIFICATION_SENT" = false ]; then
         for session in /run/user/$USER_UID/bus; do
             if [ -S "$session" ]; then
                 DBUS_SESSION_BUS_ADDRESS="unix:path=$session" \
-                notify-send -u critical \
-                    "⚠️ Resilio Sync Failed" \
-                    "Resilio Sync failed to start at $TIMESTAMP" 2>/dev/null && NOTIFICATION_SENT=true && break
+                notify-send -u critical -a "Resilio Sync Monitor" \
+                    "Resilio Sync Down" \
+                    "Resilio Sync is not running!" 2>/dev/null && NOTIFICATION_SENT=true && break
             fi
         done
     fi

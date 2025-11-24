@@ -6,7 +6,12 @@
 
 # Base directory where resilio sync is installed
 # Use absolute path or %h for home directory (systemd will expand it)
-RESILIO_BASE_DIR="%h/Apps/resilio"
+# Option 1: Auto-detect relative to home (recommended for portability)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+RESILIO_BASE_DIR="%h/${SCRIPT_DIR#$HOME/}"
+
+# Option 2: Manual path
+# RESILIO_BASE_DIR="%h/Apps/resilio"
 
 # Health check interval (in systemd time format)
 # Examples: 1min, 5min, 15min, 30min, 1h

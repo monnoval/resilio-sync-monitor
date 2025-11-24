@@ -2,19 +2,20 @@
 Description=Resilio Sync
 Wants=network-online.target
 After=network-online.target
-OnFailure=rslsync-failure-notify@%n.service
+StartLimitIntervalSec=200
+StartLimitBurst=5
 
 [Service]
 Type=simple
 ExecStart=%RESILIO_BASE_DIR%/rslsync --nodaemon
 Restart=on-failure
 RestartSec=10
-StartLimitInterval=200
-StartLimitBurst=5
+StartLimitAction=none
 
-# Health check
-ExecStartPost=/bin/sleep 5
-ExecStartPost=/bin/bash -c 'if ! pgrep -f "rslsync" > /dev/null; then exit 1; fi'
+# Faster shutdown
+TimeoutStopSec=15
+KillMode=mixed
+KillSignal=SIGTERM
 
 # Logging
 StandardOutput=journal
