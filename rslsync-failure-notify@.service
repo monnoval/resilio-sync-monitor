@@ -1,6 +1,0 @@
-[Unit]
-Description=Resilio Sync Failure Notification for %i
-
-[Service]
-Type=oneshot
-ExecStart=%RESILIO_BASE_DIR%/notify-rslsync-failure.sh "%i"

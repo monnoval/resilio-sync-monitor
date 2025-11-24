@@ -13,7 +13,7 @@ cp config.sh.example config.sh
 nano config.sh
 
 # Install
-./install-services.sh
+./install.sh
 
 # IMPORTANT: Enable lingering so services run when logged out
 sudo loginctl enable-linger $USER
@@ -45,10 +45,11 @@ This makes the setup portable - just change paths in one config file!
 
 ## 🛡️ Protection Features
 
-- **Auto-restart** - Up to 5 restart attempts on failure
-- **Instant alerts** - KDE dialogs when service fails to start  
+- **Auto-restart** - Up to 5 restart attempts on failure (10 second delay)
 - **Health checks** - Every 5 minutes, alerts if service is down
-- **Multiple methods** - kdialog (KDE) + notify-send (fallback)
+- **Desktop notifications** - KDE passive popups when service is down
+- **Fast shutdown** - 15 second timeout prevents system hang
+- **Multiple notification methods** - kdialog (KDE) + notify-send (fallback)
 
 ## 📁 Files
 
@@ -58,14 +59,13 @@ This makes the setup portable - just change paths in one config file!
 
 **Service Templates** (install script generates actual files)
 - `rslsync.service` - Main service with auto-restart
-- `rslsync-failure-notify@.service` - Failure notifications
 - `rslsync-healthcheck.service` - Health check
 - `rslsync-healthcheck.timer` - Timer configuration
 
 **Scripts**
 - `check-rslsync-health.sh` - Health monitor
 - `notify-rslsync-failure.sh` - Alert handler
-- `install-services.sh` - Reads config, generates & installs services
+- `install.sh` - Reads config, generates & installs services
 
 **Generated/Runtime Files** (gitignored)
 - `rslsync` - Binary (too large, download separately)
@@ -126,7 +126,7 @@ nano config.sh
 # HEALTH_CHECK_INTERVAL="1min"
 
 # Apply changes
-./install-services.sh
+./install.sh
 ```
 
 ## 🐛 Troubleshooting
