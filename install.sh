@@ -34,7 +34,6 @@ mkdir -p "$SYSTEMD_USER_DIR"
 # Remove old symlinks/files if they exist
 echo "Cleaning up old service files..."
 rm -f "$SYSTEMD_USER_DIR/rslsync.service"
-rm -f "$SYSTEMD_USER_DIR/rslsync-failure-notify@.service"
 rm -f "$SYSTEMD_USER_DIR/rslsync-healthcheck.service"
 rm -f "$SYSTEMD_USER_DIR/rslsync-healthcheck.timer"
 
@@ -43,9 +42,6 @@ echo "Generating service files from templates..."
 
 # rslsync.service
 sed "s|%RESILIO_BASE_DIR%|$RESILIO_BASE_DIR|g" "$SCRIPT_DIR/rslsync.service" > "$SYSTEMD_USER_DIR/rslsync.service"
-
-# rslsync-failure-notify@.service  
-sed "s|%RESILIO_BASE_DIR%|$RESILIO_BASE_DIR|g" "$SCRIPT_DIR/rslsync-failure-notify@.service" > "$SYSTEMD_USER_DIR/rslsync-failure-notify@.service"
 
 # rslsync-healthcheck.service
 sed "s|%RESILIO_BASE_DIR%|$RESILIO_BASE_DIR|g" "$SCRIPT_DIR/rslsync-healthcheck.service" > "$SYSTEMD_USER_DIR/rslsync-healthcheck.service"
