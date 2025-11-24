@@ -1,6 +1,7 @@
 [Unit]
 Description=Resilio Sync Health Check Timer
 Requires=rslsync-healthcheck.service
+After=rslsync.service
 
 [Timer]
 # Run at configured interval

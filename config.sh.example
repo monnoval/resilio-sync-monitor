@@ -13,5 +13,6 @@ RESILIO_BASE_DIR="%h/Apps/resilio"
 HEALTH_CHECK_INTERVAL="5min"
 
 # Time to wait after boot before first health check
-HEALTH_CHECK_BOOT_DELAY="2min"
+# Gives rslsync.service time to start and stabilize
+HEALTH_CHECK_BOOT_DELAY="5min"
 
